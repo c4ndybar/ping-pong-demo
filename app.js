@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const schema = require('./graphql/schema');
 const app = express();
@@ -9,13 +8,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // The GraphQL endpoint
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
+app.use('/api/graphql', graphqlExpress({ schema }));
 
 // GraphiQL, a visual editor for queries
-app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+app.use('/graphiql', graphiqlExpress({ endpointURL: '/api/graphql', rewriteURL: false }));
 
 // routes 
-app.use('/api', require('./routes'));
 app.get('/api/ping', (req, res) => {
   res.send('pong');
 });
