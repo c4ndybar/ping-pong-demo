@@ -5,9 +5,21 @@ provider:
   stage: dev
   region: us-east-1
   memorySize: 128
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "arn:aws:dynamodb:*:*:table/players"
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "arn:aws:dynamodb:*:*:table/games"
+
 functions:
   app:
-    handler: lambda.handler
+    handler: src/lambda.handler
     events: 
       - http: 
           path: /
@@ -17,3 +29,32 @@ functions:
           path: /{proxy+}
           method: ANY
           cors: true
+
+resources: # CloudFormation template syntax from here on.
+  Resources:
+    playersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: players
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    gamesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: games
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

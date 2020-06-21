@@ -1,3 +1,5 @@
+let database = require('./database');
+
 // Some fake data
 const players = [
     {
@@ -43,9 +45,22 @@ const games = [
 ];
 
 const resolvers = {
+    Mutation: {
+        createPlayer: async (_, { name }) => {
+            return await database.createPlayer(name);
+        },
+        createGame: async (_, { homePlayerId, awayPlayerId, homePlayerScore, awayPlayerScore }) => {
+            return await database.createGame(
+                homePlayerId,
+                awayPlayerId,
+                homePlayerScore,
+                awayPlayerScore
+            );
+        },
+    },
     Query: {
-        players: () => players,
-        games: () => games,
+        players: () => database.getAllPlayers(),
+        games: () => database.getAllGames(),
         rankings: () => {
             let playerStats = {}
             let defaultStats = { wins: 0, losses: 0 }
