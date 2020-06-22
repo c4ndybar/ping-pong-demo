@@ -19,7 +19,7 @@ class Game {
 
   validateGameHasPlayer (playerId) {
     if (!this.hasPlayer(playerId)) {
-      throw new Error('game does not have player')
+      throw new Error(`game does not have player ${playerId}`)
     }
   }
 
