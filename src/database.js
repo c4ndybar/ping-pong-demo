@@ -32,6 +32,8 @@ async function getPlayer (id) {
     Key: { id }
   }).promise()
 
+  console.log('got player data', data)
+
   return data.Item
 }
 
@@ -40,6 +42,8 @@ async function getGame (id) {
     TableName: 'games',
     Key: { id }
   }).promise()
+
+  console.log('got game data', data)
 
   return data.Item
 }
@@ -74,11 +78,13 @@ async function createGame (homePlayerId, awayPlayerId, homePlayerScore, awayPlay
 }
 
 module.exports = {
-  createPlayer,
-  putPlayer,
-  getPlayer,
-  getAllPlayers,
-  createGame,
-  getGame,
-  getAllGames
+  database: {
+    createPlayer,
+    putPlayer,
+    getPlayer,
+    getAllPlayers,
+    createGame,
+    getGame,
+    getAllGames
+  }
 }

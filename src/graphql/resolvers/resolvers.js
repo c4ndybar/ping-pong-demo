@@ -1,5 +1,4 @@
-const database = require('../../database')
-
+const { database } = require('../../database')
 const resolvers = {
   Mutation: {
     createPlayer: async (_, { name }) => {
@@ -16,7 +15,9 @@ const resolvers = {
   },
   Query: {
     players: () => database.getAllPlayers(),
+    player: (_, { id }) => database.getPlayer(id),
     games: () => database.getAllGames(),
+    game: (_, { id }) => database.getGame(id),
     rankings: () => {
       // let defaultStats = { wins: 0, losses: 0 }
 

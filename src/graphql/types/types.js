@@ -5,7 +5,9 @@ module.exports = `
 
     type Query { 
         players: [Player] 
+        player(id: String): Player
         games: [Game]
+        game(id: String): Game
         rankings: [Ranking]
     }
 

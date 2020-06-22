@@ -8,6 +8,7 @@ function createGame (props = {}) {
 
   return game
 }
+
 describe('Game', () => {
   it('is created with correct properties', () => {
     const game = createGame()

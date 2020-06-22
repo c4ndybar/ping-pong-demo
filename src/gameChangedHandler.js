@@ -1,5 +1,5 @@
 const { Game, GAME_RESULT } = require('./models/game')
-const database = require('./database')
+const { database } = require('./database')
 
 async function updatePlayerWinsLosses (playerId, gameResult) {
   const player = await database.getPlayer(playerId)
@@ -19,19 +19,28 @@ async function updatePlayerWinsLosses (playerId, gameResult) {
   return await database.putPlayer(player)
 }
 
+function newImageToGame (newImage) {
+  const id = JSON.stringify(newImage.id.S)
+  const homePlayerScore = JSON.stringify(newImage.homePlayerScore.N)
+  const awayPlayerScore = JSON.stringify(newImage.awayPlayerScore.N)
+  const homePlayerId = JSON.stringify(newImage.homePlayerId.S)
+  const awayPlayerId = JSON.stringify(newImage.awayPlayerId.S)
+
+  return new Game(id, homePlayerId, awayPlayerId, homePlayerScore, awayPlayerScore)
+}
+
 module.exports = async (event, context, callback) => {
   const updates = event.Records.map((record) => {
     console.log('Stream record: ', JSON.stringify(record, null, 2))
-    const { id, homePlayerId, awayPlayerId, homePlayerScore, awayPlayerScore } = record.dynamodb.NewImage
-    const game = new Game(id.S, homePlayerId.S, awayPlayerId.S, homePlayerScore.N, awayPlayerScore.N)
+    const game = newImageToGame(record.dynamodb.NewImage)
 
     return Promise.all([
-      updatePlayerWinsLosses(awayPlayerId, game.gameResultForPlayer(awayPlayerId)),
-      updatePlayerWinsLosses(homePlayerId, game.gameResultForPlayer(homePlayerId))
+      updatePlayerWinsLosses(game.awayPlayerId, game.gameResultForPlayer(game.awayPlayerId)),
+      updatePlayerWinsLosses(game.homePlayerId, game.gameResultForPlayer(game.homePlayerId))
     ])
   })
 
-  await updates
+  await Promise.all(updates)
 
   callback(null, `Successfully processed ${event.Records.length} game records.`)
 }
