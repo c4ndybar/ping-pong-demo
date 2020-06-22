@@ -27,6 +27,7 @@ async function getAllGames () {
 }
 
 async function getPlayer (id) {
+  console.log('getting player ', id)
   const data = await dynamoDb.get({
     TableName: 'players',
     Key: { id }

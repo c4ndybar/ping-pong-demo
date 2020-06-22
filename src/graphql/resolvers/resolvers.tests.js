@@ -7,10 +7,20 @@ const resolvers = require('./resolvers')
 const { database } = require('../../database')
 
 describe('resolvers', () => {
+  let sandbox
+
+  beforeEach(() => {
+    sandbox = sinon.createSandbox()
+  })
+
+  afterEach(() => {
+    sandbox.restore()
+  })
+
   describe('.Query', () => {
     it('resolves players', async () => {
       const expected = [1, 2, 3]
-      sinon.stub(database, 'getAllPlayers').returns(expected)
+      sandbox.stub(database, 'getAllPlayers').returns(expected)
 
       const players = await resolvers.Query.players()
 
@@ -19,7 +29,7 @@ describe('resolvers', () => {
 
     it('resolves all games', async () => {
       const expected = [1, 2, 3]
-      sinon.stub(database, 'getAllGames').returns(expected)
+      sandbox.stub(database, 'getAllGames').returns(expected)
 
       const games = await resolvers.Query.games()
 
@@ -28,7 +38,7 @@ describe('resolvers', () => {
 
     it('resolves a single player', async () => {
       const expected = { id: 2, name: 'player' }
-      sinon.stub(database, 'getPlayer').returns(expected)
+      sandbox.stub(database, 'getPlayer').returns(expected)
 
       const player = await resolvers.Query.player(null, { id: 2 })
 
@@ -38,7 +48,7 @@ describe('resolvers', () => {
 
     it('resolves a single game', async () => {
       const expected = { id: 2 }
-      sinon.stub(database, 'getGame').returns(expected)
+      sandbox.stub(database, 'getGame').returns(expected)
 
       const game = await resolvers.Query.game(null, { id: 2 })
 
@@ -50,7 +60,7 @@ describe('resolvers', () => {
   describe('.Mutation', () => {
     it('creates a single player', async () => {
       const expected = { id: 2, name: 'frank' }
-      sinon.stub(database, 'createPlayer').returns(expected)
+      sandbox.stub(database, 'createPlayer').returns(expected)
 
       const player = await resolvers.Mutation.createPlayer(null, { name: 'frank' })
 
@@ -60,7 +70,7 @@ describe('resolvers', () => {
 
     it('creates a single game', async () => {
       const expected = { id: 2, homePlayerId: 1, awayPlayerId: 2, homePlayerScore: 5, awayPlayerScore: 8 }
-      sinon.stub(database, 'createGame').returns(expected)
+      sandbox.stub(database, 'createGame').returns(expected)
 
       const player = await resolvers.Mutation.createGame(null, { homePlayerId: 1, awayPlayerId: 2, homePlayerScore: 5, awayPlayerScore: 8 })
 

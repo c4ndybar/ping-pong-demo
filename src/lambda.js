@@ -4,5 +4,5 @@ const gameChangedHandler = require('./gameChangedHandler')
 
 module.exports = {
   api: serverless(app),
-  gameChangedHandler
+  gameChangedHandler: gameChangedHandler.handler
 }
