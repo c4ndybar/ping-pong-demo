@@ -11,15 +11,11 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:*
-      Resource: "arn:aws:dynamodb:*:*:table/players"
-    - Effect: Allow
-      Action:
-        - dynamodb:*
-      Resource: "arn:aws:dynamodb:*:*:table/games"
+      Resource: arn:aws:dynamodb:*:*:*
 
 functions:
   app:
-    handler: src/lambda.handler
+    handler: src/lambda.api
     events: 
       - http: 
           path: /
@@ -29,8 +25,18 @@ functions:
           path: /{proxy+}
           method: ANY
           cors: true
+  gameChangedStreamHandler:
+    handler: src/lambda.gameChangedHandler
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - gamesTable
+              - StreamArn
+          batchSize: 1
 
-resources: # CloudFormation template syntax from here on.
+resources:
   Resources:
     playersTable:
       Type: AWS::DynamoDB::Table
@@ -58,3 +64,5 @@ resources: # CloudFormation template syntax from here on.
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES

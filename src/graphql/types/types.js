@@ -1,7 +1,7 @@
 module.exports = `
-    type Player { id: String, name: String }
+    type Player { id: String, name: String, wins: Float, losses: Float }
     type Game {id: String, homePlayerId: String, awayPlayerId: String, homePlayerScore: Int, awayPlayerScore: Int}
-    type Ranking {rank: Int, wins: Float, losses: Float, player: Player}
+    type Ranking {rank: Int, player: Player}
 
     type Query { 
         players: [Player] 

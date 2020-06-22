@@ -1,4 +1,8 @@
-const serverless = require('serverless-http');
-const app = require('./app');
+const serverless = require('serverless-http')
+const app = require('./app')
+const gameChangedHandler = require('./gameChangedHandler')
 
-module.exports.handler = serverless(app);
+module.exports = {
+  api: serverless(app),
+  gameChangedHandler
+}

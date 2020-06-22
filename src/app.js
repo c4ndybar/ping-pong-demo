@@ -1,21 +1,21 @@
-const express = require('express');
-const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
-const schema = require('./graphql/schema');
-const app = express();
+const express = require('express')
+const { graphqlExpress, graphiqlExpress } = require('apollo-server-express')
+const schema = require('./graphql/schema')
+const app = express()
 
-//middleware
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+// middleware
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 
 // The GraphQL endpoint
-app.use('/api/graphql', graphqlExpress({ schema }));
+app.use('/api/graphql', graphqlExpress({ schema }))
 
 // GraphiQL, a visual editor for queries
-app.use('/graphiql', graphiqlExpress({ endpointURL: '/api/graphql', rewriteURL: false }));
+app.use('/graphiql', graphiqlExpress({ endpointURL: '/api/graphql', rewriteURL: false }))
 
-// routes 
+// routes
 app.get('/api/ping', (req, res) => {
-  res.send('pong');
-});
+  res.send('pong')
+})
 
-module.exports = app;
+module.exports = app
