@@ -68,6 +68,7 @@ async function putPlayer (player) {
 
 async function createGame (homePlayerId, awayPlayerId, homePlayerScore, awayPlayerScore) {
   const game = { id: uuid(), homePlayerId, awayPlayerId, homePlayerScore, awayPlayerScore }
+
   const params = {
     TableName: 'games',
     Item: game

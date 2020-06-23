@@ -5,7 +5,7 @@ chai.use(sinonChai)
 const expect = chai.expect
 const { Game } = require('./models/game')
 const { database } = require('./database')
-const { updatePlayerWinsLosses } = require('./playerController')
+const { playerController: { updatePlayerWinsLosses, getPlayerRankings } } = require('./playerController')
 
 const HOME_PLAYER_ID = 1
 const AWAY_PLAYER_ID = 2
@@ -102,6 +102,156 @@ describe('playerController', () => {
         wins: 1,
         losses: 2
       }))
+    })
+  })
+
+  describe('.getPlayerRankings', () => {
+    let sandbox
+
+    function stubPlayers (players = []) {
+      database.getAllPlayers.returns(Promise.resolve(players))
+    }
+
+    beforeEach(() => {
+      sandbox = sinon.createSandbox()
+      sandbox.stub(database, 'getAllPlayers')
+    })
+
+    afterEach(() => {
+      sandbox.restore()
+    })
+
+    it('returns a single player with rank 1', async () => {
+      stubPlayers([{ id: 1, wins: 0, losses: 0, name: 'frank' }])
+
+      const rankings = await getPlayerRankings()
+
+      expect(rankings).to.eql([{
+        rank: 1,
+        player: {
+          id: 1,
+          wins: 0,
+          losses: 0,
+          name: 'frank'
+        }
+      }])
+    })
+
+    it('returns a multiple players sorted on wins', async () => {
+      stubPlayers([
+        { id: 1, wins: 0, losses: 0, name: 'frank' },
+        { id: 2, wins: 1, losses: 1, name: 'jeff' }
+      ])
+
+      const rankings = await getPlayerRankings()
+
+      expect(rankings).to.eql([
+        {
+          rank: 1,
+          player: {
+            id: 2,
+            wins: 1,
+            losses: 1,
+            name: 'jeff'
+          }
+        },
+        {
+          rank: 2,
+          player: {
+            id: 1,
+            wins: 0,
+            losses: 0,
+            name: 'frank'
+          }
+        }])
+    })
+
+    it('sorts secondarily on losses', async () => {
+      stubPlayers([
+        { id: 3, wins: 1, losses: 2, name: 'larry' },
+        { id: 1, wins: 0, losses: 0, name: 'frank' },
+        { id: 2, wins: 1, losses: 1, name: 'jeff' }
+      ])
+
+      const rankings = await getPlayerRankings()
+
+      expect(rankings).to.eql([
+        {
+          rank: 1,
+          player: {
+            id: 2,
+            wins: 1,
+            losses: 1,
+            name: 'jeff'
+          }
+        },
+        {
+          rank: 2,
+          player: {
+            id: 3,
+            wins: 1,
+            losses: 2,
+            name: 'larry'
+          }
+        },
+        {
+          rank: 3,
+          player: {
+            id: 1,
+            wins: 0,
+            losses: 0,
+            name: 'frank'
+          }
+        }])
+    })
+
+    it('repeats rank number if there are ties', async () => {
+      stubPlayers([
+        { id: 3, wins: 1, losses: 2, name: 'larry' },
+        { id: 1, wins: 0, losses: 0, name: 'frank' },
+        { id: 2, wins: 1, losses: 1, name: 'jeff' },
+        { id: 4, wins: 1, losses: 1, name: 'geoff' }
+      ])
+
+      const rankings = await getPlayerRankings()
+
+      expect(rankings).to.eql([
+        {
+          rank: 1,
+          player: {
+            id: 2,
+            wins: 1,
+            losses: 1,
+            name: 'jeff'
+          }
+        },
+        {
+          rank: 1,
+          player: {
+            id: 4,
+            wins: 1,
+            losses: 1,
+            name: 'geoff'
+          }
+        },
+        {
+          rank: 3,
+          player: {
+            id: 3,
+            wins: 1,
+            losses: 2,
+            name: 'larry'
+          }
+        },
+        {
+          rank: 4,
+          player: {
+            id: 1,
+            wins: 0,
+            losses: 0,
+            name: 'frank'
+          }
+        }])
     })
   })
 })

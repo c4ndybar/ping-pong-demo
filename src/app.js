@@ -11,7 +11,7 @@ app.use(express.json())
 app.use('/api/graphql', graphqlExpress({ schema }))
 
 // GraphiQL, a visual editor for queries
-app.use('/graphiql', graphiqlExpress({ endpointURL: '/api/graphql', rewriteURL: false }))
+app.use('/graphiql', graphiqlExpress({ endpointURL: '/dev/api/graphql', rewriteURL: false }))
 
 // routes
 app.get('/api/ping', (req, res) => {

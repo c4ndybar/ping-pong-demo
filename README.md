@@ -8,6 +8,11 @@ npm install
 npm start
 ```
 
+##### Run tests
+```
+npm test
+```
+
 #### To deploy using Serverless
 ```
 serverless config credentials --provider aws --key <the key> --secret <the secret>

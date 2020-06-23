@@ -1,4 +1,6 @@
 const { database } = require('../../database')
+const { playerController } = require('../../playerController')
+
 const resolvers = {
   Mutation: {
     createPlayer: async (_, { name }) => {
@@ -18,42 +20,7 @@ const resolvers = {
     player: (_, { id }) => database.getPlayer(id),
     games: () => database.getAllGames(),
     game: (_, { id }) => database.getGame(id),
-    rankings: () => {
-      // let defaultStats = { wins: 0, losses: 0 }
-
-      // let lastWins, lastRank;
-
-      // let rankings = players.map((player) => {
-      //     stats = playerStats[player.id] || Object.assign({}, defaultStats);
-      //     stats.winLossRatio = stats.wins / stats.losses;
-
-      //     return { rank: 0, ...stats, player }
-      // })
-      //     .sort((a, b) => {
-      //         if (b.winLossRatio == a.winLossRatio) {
-      //             return a.losses - b.losses
-      //         } else {
-      //             return b.winLossRatio - a.winLossRatio
-      //         }
-      //     })
-      //     .map((rank, index) => {
-      //         if (lastWins == rank.wins) {
-      //             // we have a tie!
-      //             rank.rank = lastRank;
-      //         } else {
-      //             rank.rank = index + 1;
-      //         }
-
-      //         lastWins = rank.wins;
-      //         lastRank = rank.rank;
-
-      //         return rank;
-      //     });
-
-      // return rankings;
-
-      return []
-    }
+    rankings: () => playerController.getPlayerRankings()
   }
 }
 

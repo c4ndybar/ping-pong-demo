@@ -5,7 +5,7 @@ chai.use(sinonChai)
 const expect = chai.expect
 const { Game } = require('./models/game')
 const { handler } = require('./gameChangedHandler')
-const playerController = require('./playerController')
+const { playerController } = require('./playerController')
 
 const defaultGame = new Game('1', '2', '3', '4', '5')
 const defaultRawGameData = {
@@ -31,7 +31,7 @@ const defaultRawGameData = {
   }
 }
 
-function createEvent(games = [defaultRawGameData]) {
+function createEvent (games = [defaultRawGameData]) {
   return {
     Records: games
   }

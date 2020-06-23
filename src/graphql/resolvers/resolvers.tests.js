@@ -5,6 +5,7 @@ chai.use(sinonChai)
 const expect = chai.expect
 const resolvers = require('./resolvers')
 const { database } = require('../../database')
+const { playerController } = require('../../playerController')
 
 describe('resolvers', () => {
   let sandbox
@@ -18,6 +19,15 @@ describe('resolvers', () => {
   })
 
   describe('.Query', () => {
+    it('gets player rankings', async () => {
+      const expected = [1, 2, 3]
+      sandbox.stub(playerController, 'getPlayerRankings').returns(expected)
+
+      const rankings = await resolvers.Query.rankings()
+
+      expect(rankings).to.eql(expected)
+    })
+
     it('resolves players', async () => {
       const expected = [1, 2, 3]
       sandbox.stub(database, 'getAllPlayers').returns(expected)
